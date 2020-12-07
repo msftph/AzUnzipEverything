@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.Extensions.Logging;
 using SharpCompress.Archives.SevenZip;
+using System.IO;
+using System;
+using Microsoft.WindowsAzure.Storage;
 
 namespace AzUnzipEverything.Processors
 {
@@ -29,7 +32,8 @@ namespace AzUnzipEverything.Processors
                         using(var sourceFileStream = entry.OpenEntryStream())
                         {
                             Log.LogInformation($"started extracting {entry.Key} ({entry.CompressedSize}) to {targetFileName} ({entry.Size})");
-                            await targetBlob.UploadFromStreamAsync(sourceFileStream);
+                            targetBlob.StreamWriteSizeInBytes = 104857600;
+                            await targetBlob.UploadFromStreamAsync(sourceFileStream);                            
                             Log.LogInformation($"completed extracting {entry.Key} to {targetFileName}");
                         }
                     }
